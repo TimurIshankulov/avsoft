@@ -52,15 +52,23 @@ if __name__ == '__main__':
     # Create output folder if it is not exist
     if not os.path.exists(OUTPUT_PATH):
         os.makedirs(OUTPUT_PATH)
-
-    session = DBSession()
-    try:
-        main(session)
-    except KeyboardInterrupt:
-        print('Interrupted')
+    session = None
+    for i in range(5):
         try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
-    finally:
-        session.close()
+            session = DBSession()
+        except Exception:
+            time.sleep(10)
+        else:
+            break
+
+    if session is not None:
+        try:
+            main(session)
+        except KeyboardInterrupt:
+            print('Interrupted')
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)
+        finally:
+            session.close()

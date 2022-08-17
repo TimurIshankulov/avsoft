@@ -1,5 +1,6 @@
 import pickle
 import sys
+import time
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, BLOB, Float, Boolean, DateTime
@@ -50,5 +51,9 @@ class Word(DeclarativeBase):
     filenames = Column(BLOB())
 
 
-DeclarativeBase.metadata.create_all(engine)
-DeclarativeBase.metadata.bind = engine
+for i in range(5):
+    try:
+        DeclarativeBase.metadata.create_all(engine)
+        DeclarativeBase.metadata.bind = engine
+    except Exception:
+        time.sleep(10)

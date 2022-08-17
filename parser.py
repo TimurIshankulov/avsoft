@@ -3,6 +3,7 @@ import sys
 import json
 import re
 import pickle
+import time
 import pika
 
 from models import DBSession, Word
@@ -66,17 +67,25 @@ def main(parsing_channel):
 
 
 if __name__ == '__main__':
-    parameters = pika.URLParameters(RABBITMQ_CONN_STRING)
-    parameters._heartbeat = 0
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
-    try:
-        main(channel)
-    except KeyboardInterrupt:
-        print('Interrupted')
+    channel = None
+    for i in range(5):
         try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
-    finally:
-        channel.close()
+            parameters = pika.URLParameters(RABBITMQ_CONN_STRING)
+            parameters._heartbeat = 0
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
+        except Exception:
+            time.sleep(10)
+        else:
+            break
+    if channel is not None:
+        try:
+            main(channel)
+        except KeyboardInterrupt:
+            print('Interrupted')
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os._exit(0)
+        finally:
+            channel.close()

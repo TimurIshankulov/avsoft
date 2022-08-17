@@ -54,19 +54,24 @@ class Sender:
 
 def get_connections():
     """Returns channels with queues and DB connection"""
-    parameters = pika.URLParameters(RABBITMQ_CONN_STRING)
-    parameters._heartbeat = 0
+    for i in range(5):
+        try:
+            parameters = pika.URLParameters(RABBITMQ_CONN_STRING)
+            parameters._heartbeat = 0
 
-    parsing_connection = pika.BlockingConnection(parameters)
-    parsing_channel = parsing_connection.channel()
-    parsing_channel.queue_declare(queue=PARSING_QUEUE)
+            parsing_connection = pika.BlockingConnection(parameters)
+            parsing_channel = parsing_connection.channel()
+            parsing_channel.queue_declare(queue=PARSING_QUEUE)
 
-    errors_connection = pika.BlockingConnection(parameters)
-    errors_channel = errors_connection.channel()
-    errors_channel.queue_declare(queue=ERRORS_QUEUE)
+            errors_connection = pika.BlockingConnection(parameters)
+            errors_channel = errors_connection.channel()
+            errors_channel.queue_declare(queue=ERRORS_QUEUE)
 
-    db_session = DBSession()
-    return parsing_channel, errors_channel, db_session
+            db_session = DBSession()
+        except Exception:
+            time.sleep(10)
+        else:
+            return parsing_channel, errors_channel, db_session
 
 
 def main(parsing_channel, errors_channel, db_session):
