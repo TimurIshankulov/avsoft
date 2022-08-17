@@ -50,7 +50,6 @@ class Sender:
                     self.errors_channel.basic_publish(exchange='',
                                                       routing_key=ERRORS_QUEUE,
                                                       body=body)
-                print(body)
 
 
 def get_connections():

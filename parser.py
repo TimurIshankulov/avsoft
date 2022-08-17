@@ -31,7 +31,6 @@ def main(parsing_channel):
         db_session = DBSession()
         body = json.loads(body.decode('UTF-8'))
         filename = body['filename']
-        print(filename)
 
         lines = read_file(filename)
         for line in lines:

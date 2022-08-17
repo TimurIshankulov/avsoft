@@ -28,7 +28,6 @@ class Reader:
                     f.write(word.word + '\n')
                     f.write(' '.join(pickle.loads(word.filenames)))
             except OSError:
-                print('here')
                 continue
             else:
                 self.db_session.delete(word)

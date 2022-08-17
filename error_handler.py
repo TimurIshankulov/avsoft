@@ -19,7 +19,6 @@ def main(parsing_channel):
         """Callback function handles messages from the errors queue"""
         body = json.loads(body.decode('UTF-8'))
         filename = body['filename']
-        print(filename)
         send_email.delay(filename)
 
     parsing_channel.queue_declare(queue=ERRORS_QUEUE)
