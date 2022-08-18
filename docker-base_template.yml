@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  generic:
+    environment:
+      DB_NAME: avsoft
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: "localhost"
+      DB_PORT: 3306
+      RABBITMQ_USER: admin
+      RABBITMQ_PASSWORD: password
+      RABBITMQ_HOST: "localhost"
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: vhost
+      SMTP_HOST: "smtp.server"
+      SMTP_PORT: port
+      SMTP_HOST_USER: "user_email"
+      SMTP_HOST_PASSWORD: password
+      SMTP_RECEIVER: "receiver of email"
+      INPUT_PATH: "data/"
+      OUTPUT_PATH: "output/"
+      N_TIMES: 5
+
+  mysql_base:
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: avsoft
+    volumes:
+      - "/path/to/db:/var/lib/mysql"
+
+  rabbitmq_base:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_VHOST: vhost

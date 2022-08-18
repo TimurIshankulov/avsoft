@@ -1,0 +1,73 @@
+version: "3.9"
+services:
+  mysql:
+    extends:
+      file: docker-base.yml
+      service: mysql_base
+    image: "mysql:8.0"
+
+  rabbitmq:
+    extends:
+      file: docker-base.yml
+      service: rabbitmq_base
+    image: "rabbitmq:3.10-management"
+
+  sender:
+    extends:
+      file: docker-base.yml
+      service: generic
+    build: .
+    volumes:
+      - ".:/app"
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: python3 /app/sender.py
+
+  parser:
+    extends:
+      file: docker-base.yml
+      service: generic
+    build: .
+    volumes:
+      - ".:/app"
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: python3 /app/parser.py
+
+  error_handler:
+    extends:
+      file: docker-base.yml
+      service: generic
+    build: .
+    volumes:
+      - ".:/app"
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: python3 /app/error_handler.py
+
+  reader:
+    extends:
+      file: docker-base.yml
+      service: generic
+    build: .
+    volumes:
+      - ".:/app"
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: python3 /app/reader.py
+
+  celery:
+    extends:
+      file: docker-base.yml
+      service: generic
+    build: .
+    volumes:
+      - ".:/app"
+    depends_on:
+      - mysql
+      - rabbitmq
+    command: celery -A celery_module worker -l info
