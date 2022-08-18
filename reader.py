@@ -20,6 +20,13 @@ class Reader:
         files where word contains. If there is error with removing record from the
         database then output file will be deleted.
         """
+        # Commit need for query to be updated, otherwise it will return the same results
+        try:
+            self.db_session.commit()
+        except Exception:
+            print(sys.exc_info()[1])
+            self.db_session.rollback()
+
         words = self.db_session.query(Word).filter(Word.count >= N_TIMES)
         for word in words:
             filename = word.word + '__' + str(uuid.uuid4())
